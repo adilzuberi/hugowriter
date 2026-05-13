@@ -162,30 +162,25 @@ body {
 
 .title-bar {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 0.4rem 0.75rem;
   border-bottom: 1px solid #e8e8e8;
   background: #fff;
   font-size: 0.85rem;
 }
 
-.title-bar .dirty-dot {
-  color: #a45a00;
-  font-size: 1.2rem;
-  line-height: 1;
-  width: 0.6rem;
-  display: inline-flex;
-  justify-content: center;
-}
-
-.title-bar .dirty-dot.hidden {
-  visibility: hidden;
-}
-
 .title-bar .filename {
   font-weight: 600;
   color: #222;
+}
+
+.version-pill {
+  font-size: 0.7rem;
+  color: #888;
+  font-family: var(--font-code, Menlo, monospace);
+  opacity: 0.65;
 }
 
 .editor-body {

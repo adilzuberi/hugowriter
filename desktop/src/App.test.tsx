@@ -26,6 +26,10 @@ vi.mock('@tauri-apps/api/window', () => ({
   }),
 }))
 
+vi.mock('@tauri-apps/api/app', () => ({
+  getVersion: vi.fn().mockResolvedValue('0.1.0-alpha.6-test'),
+}))
+
 vi.mock('./components/Editor', () => ({
   Editor: ({
     content,

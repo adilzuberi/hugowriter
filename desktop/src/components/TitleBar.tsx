@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { getVersion } from '@tauri-apps/api/app'
+
 type Props = {
   file: string | null
   dirty: boolean
@@ -9,13 +12,21 @@ function basename(path: string): string {
 }
 
 export function TitleBar({ file, dirty }: Props) {
-  if (!file) return null
+  const [version, setVersion] = useState<string>('')
+
+  useEffect(() => {
+    getVersion()
+      .then(setVersion)
+      .catch(() => undefined)
+  }, [])
+
   return (
-    <div className="title-bar" role="status" aria-live="polite">
-      <span className={dirty ? 'dirty-dot' : 'dirty-dot hidden'} aria-label={dirty ? 'Unsaved changes' : ''}>
-        •
+    <div className="title-bar">
+      <span className="filename">
+        {dirty && <span aria-label="Unsaved changes">• </span>}
+        {file ? basename(file) : 'Hugowriter'}
       </span>
-      <span className="filename">{basename(file)}</span>
+      {version && <span className="version-pill">v{version}</span>}
     </div>
   )
 }
