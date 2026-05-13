@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
 import { Sidebar } from './components/Sidebar'
 import { Editor } from './components/Editor'
+import { TitleBar } from './components/TitleBar'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
 
@@ -52,8 +53,27 @@ function NoFileMessage() {
 }
 
 export default function App() {
-  const { state, chooseFolder, toggleDir, openFile, updateContent } = useHugowriterState()
+  const {
+    state,
+    chooseFolder,
+    toggleDir,
+    openFile,
+    updateContent,
+    saveCurrent,
+  } = useHugowriterState()
   const [mode, setMode] = useState<Mode>('mode1')
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault()
+        e.stopPropagation()
+        void saveCurrent().catch(() => undefined)
+      }
+    }
+    window.addEventListener('keydown', handler, { capture: true })
+    return () => window.removeEventListener('keydown', handler, { capture: true })
+  }, [saveCurrent])
 
   return (
     <>
@@ -72,24 +92,27 @@ export default function App() {
             onFileClick={openFile}
             onChangeFolder={chooseFolder}
           />
-          {mode === 'mode3' ? (
-            // TODO: webview parity test
-            <div className="mode3-placeholder">
-              Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
-            </div>
-          ) : !state.file ? (
-            <NoFileMessage />
-          ) : (
-            <div className="editor-body">
-              <div className="grt">
-                <Editor
-                  filePath={state.file}
-                  content={state.content}
-                  onChange={updateContent}
-                />
+          <div className="editor-pane">
+            <TitleBar file={state.file} dirty={state.dirty} />
+            {mode === 'mode3' ? (
+              // TODO: webview parity test
+              <div className="mode3-placeholder">
+                Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
               </div>
-            </div>
-          )}
+            ) : !state.file ? (
+              <NoFileMessage />
+            ) : (
+              <div className="editor-body">
+                <div className="grt">
+                  <Editor
+                    filePath={state.file}
+                    content={state.content}
+                    onChange={updateContent}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

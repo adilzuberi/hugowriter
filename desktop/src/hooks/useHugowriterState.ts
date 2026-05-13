@@ -1,7 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { loadState, saveState } from '../api/state'
-import { pickFolder, readFile, readTree } from '../api/fs'
+import { pickFolder, readFile, readTree, writeFile } from '../api/fs'
+import { setWindowTitle } from '../api/window'
 import type { FileNode } from '../lib/treeFilter'
+
+function basename(path: string): string {
+  const parts = path.split('/').filter(Boolean)
+  return parts[parts.length - 1] ?? path
+}
 
 export type HugowriterState = {
   folder: string | null
@@ -26,6 +32,8 @@ const EMPTY: HugowriterState = {
 export function useHugowriterState() {
   const [state, setState] = useState<HugowriterState>(EMPTY)
   const [loaded, setLoaded] = useState(false)
+  const stateRef = useRef(state)
+  stateRef.current = state
 
   useEffect(() => {
     let cancelled = false
@@ -114,6 +122,25 @@ export function useHugowriterState() {
     }
   }, [])
 
+  const saveCurrent = useCallback(async (): Promise<void> => {
+    const { file, content, dirty } = stateRef.current
+    if (!file || !dirty) return
+    try {
+      await writeFile(file, content)
+      setState((s) =>
+        s.file === file && s.content === content
+          ? { ...s, dirty: false, treeError: null }
+          : s,
+      )
+    } catch (err) {
+      setState((s) => ({
+        ...s,
+        treeError: `Save failed: ${String(err)}`,
+      }))
+      throw err
+    }
+  }, [])
+
   useEffect(() => {
     if (!loaded) return
     saveState({
@@ -123,6 +150,13 @@ export function useHugowriterState() {
     })
   }, [loaded, state.folder, state.file, state.expandedDirs])
 
+  // Reflect dirty state in the OS window title so it shows in the Mission Control switcher.
+  useEffect(() => {
+    const filename = state.file ? basename(state.file) : 'Hugowriter'
+    const title = state.dirty ? `• ${filename}` : filename
+    setWindowTitle(title)
+  }, [state.file, state.dirty])
+
   return {
     state,
     setState,
@@ -131,6 +165,7 @@ export function useHugowriterState() {
     toggleDir,
     openFile,
     updateContent,
+    saveCurrent,
     loaded,
   }
 }

@@ -20,6 +20,12 @@ vi.mock('@tauri-apps/plugin-fs', () => ({
 
 vi.mock('@tauri-apps/plugin-dialog', () => dialogMock)
 
+vi.mock('@tauri-apps/api/window', () => ({
+  getCurrentWindow: () => ({
+    setTitle: vi.fn().mockResolvedValue(undefined),
+  }),
+}))
+
 import App from './App'
 
 describe('App', () => {
