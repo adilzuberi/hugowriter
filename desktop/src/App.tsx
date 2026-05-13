@@ -11,6 +11,7 @@ import {
   codeMirrorPlugin,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
+import './themes/impact.css'
 
 const SAMPLE_MARKDOWN = `# Hugowriter
 
@@ -51,7 +52,7 @@ const MODES: Array<{ id: Mode; label: string }> = [
 
 function EditorBody() {
   return (
-    <div className="editor-body">
+    <div className="editor-body grt">
       <MDXEditor
         markdown={SAMPLE_MARKDOWN}
         plugins={[
