@@ -1,0 +1,28 @@
+name: desktop CI
+
+# Linux + Windows jobs deferred to 30-day dogfood checkpoint per scaffold-plan.md
+
+on:
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'src/**'
+      - '.github/workflows/desktop-ci.yml'
+  push:
+    branches: [main]
+
+jobs:
+  desktop:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm --filter ./desktop test
+      - run: pnpm --filter ./desktop build

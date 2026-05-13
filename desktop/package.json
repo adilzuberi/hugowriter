@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "pnpm -w build",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "pretest": "pnpm -w build",
     "test": "vitest --run"
   },
   "dependencies": {
