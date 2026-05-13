@@ -1,0 +1,289 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #222;
+  background: #fff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hugowriter-shell {
+  padding: 1rem;
+}
+
+.mode-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #e2e2e2;
+  background: #fafafa;
+}
+
+.mode-toolbar button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mode-toolbar button.active {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 240px;
+  border-right: 1px solid #e2e2e2;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 0.875rem;
+  gap: 0.5rem;
+}
+
+.sidebar-header .folder-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-header .link {
+  background: none;
+  border: none;
+  color: #2962b8;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+.sidebar-header .link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-error {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #a4302a;
+  background: #fdecea;
+  border-bottom: 1px solid #f5c6c4;
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow: auto;
+  padding: 0.25rem 0;
+}
+
+.empty-tree {
+  padding: 0.75rem;
+}
+
+.file-tree,
+.file-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #222;
+  font-family: inherit;
+}
+
+.tree-row:hover {
+  background: #ececec;
+}
+
+.tree-row.selected {
+  background: #d5e3f7;
+}
+
+.tree-row .caret {
+  width: 0.9rem;
+  display: inline-flex;
+  justify-content: center;
+  color: #888;
+  font-size: 0.7rem;
+}
+
+.tree-row .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.title-bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fff;
+  font-size: 0.85rem;
+}
+
+.title-bar .filename {
+  font-weight: 600;
+  color: #222;
+}
+
+.version-pill {
+  font-size: 0.7rem;
+  color: #888;
+  font-family: var(--font-code, Menlo, monospace);
+  opacity: 0.65;
+}
+
+.editor-body {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+}
+
+/*
+ * impact-css's `.grt button` chunky-blues every button inside the themed body,
+ * including MDXEditor's toolbar. (0,2,1) here beats (0,1,1) there; back to neutral
+ * surface so MDXEditor's own toolbar styling shows through.
+ */
+.grt .mdxeditor button,
+.grt .mdxeditor select {
+  font-family: inherit;
+  font-weight: normal;
+  color: inherit;
+  background: transparent;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-bottom-width: 1px;
+  border-radius: 4px;
+  padding: 3px 5px;
+  outline: none;
+  outline-offset: 0;
+  text-decoration: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.grt .mdxeditor button:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Strip .grt's own width constraint at the wrapper level so the toolbar
+   can fill the editor pane. Typography still applies via .grt descendant
+   selectors (.grt h1, .grt p, etc). */
+.editor-body > .grt {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+/* Re-apply the 648px column to the actual editable area only. */
+.editor-body .grt [contenteditable="true"] {
+  max-width: 648px;
+  margin-inline: auto;
+  padding-inline: 0.9931rem;
+}
+
+/* Keep the toolbar pinned to the top of the editor pane on scroll. */
+.editor-body .grt [role="toolbar"] {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+}
+
+.mode3-placeholder {
+  flex: 1;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
+}
+
+.loading {
+  padding: 2rem;
+  color: #888;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #555;
+  max-width: 32rem;
+}
+
+.empty-state button.primary {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border: 1px solid #222;
+  background: #222;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.empty-state button.primary:hover {
+  background: #000;
+}
+
+.muted {
+  color: #777;
+  font-size: 0.9rem;
+}
