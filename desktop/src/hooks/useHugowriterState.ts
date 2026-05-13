@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { loadState, saveState } from '../api/state'
-import { pickFolder, readTree } from '../api/fs'
+import { pickFolder, readFile, readTree } from '../api/fs'
 import type { FileNode } from '../lib/treeFilter'
 
 export type HugowriterState = {
@@ -94,6 +94,26 @@ export function useHugowriterState() {
     })
   }, [])
 
+  const updateContent = useCallback((markdown: string) => {
+    setState((s) => {
+      if (s.content === markdown) return s
+      return { ...s, content: markdown, dirty: true }
+    })
+  }, [])
+
+  const openFile = useCallback(async (node: FileNode) => {
+    if (node.kind !== 'file') return
+    try {
+      const content = await readFile(node.path)
+      setState((s) => ({ ...s, file: node.path, content, dirty: false, treeError: null }))
+    } catch (err) {
+      setState((s) => ({
+        ...s,
+        treeError: `Could not read ${node.name}: ${String(err)}`,
+      }))
+    }
+  }, [])
+
   useEffect(() => {
     if (!loaded) return
     saveState({
@@ -103,5 +123,14 @@ export function useHugowriterState() {
     })
   }, [loaded, state.folder, state.file, state.expandedDirs])
 
-  return { state, setState, setFolder, chooseFolder, toggleDir, loaded }
+  return {
+    state,
+    setState,
+    setFolder,
+    chooseFolder,
+    toggleDir,
+    openFile,
+    updateContent,
+    loaded,
+  }
 }

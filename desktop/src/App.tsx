@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
 import { Sidebar } from './components/Sidebar'
+import { Editor } from './components/Editor'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
 
@@ -40,18 +41,18 @@ function EmptyFolderState({ onChoose }: { onChoose: () => void }) {
   )
 }
 
-function EmptyEditorBody() {
+function NoFileMessage() {
   return (
     <div className="editor-body">
       <div className="grt">
-        <p className="muted">Pick a file from the sidebar to start editing. Editor wiring lands in the next commit.</p>
+        <p className="muted">Pick a file from the sidebar to start editing.</p>
       </div>
     </div>
   )
 }
 
 export default function App() {
-  const { state, chooseFolder, toggleDir } = useHugowriterState()
+  const { state, chooseFolder, toggleDir, openFile, updateContent } = useHugowriterState()
   const [mode, setMode] = useState<Mode>('mode1')
 
   return (
@@ -68,7 +69,7 @@ export default function App() {
             selectedPath={state.file}
             errorMessage={state.treeError}
             onToggleDir={toggleDir}
-            onFileClick={() => undefined}
+            onFileClick={openFile}
             onChangeFolder={chooseFolder}
           />
           {mode === 'mode3' ? (
@@ -76,8 +77,18 @@ export default function App() {
             <div className="mode3-placeholder">
               Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
             </div>
+          ) : !state.file ? (
+            <NoFileMessage />
           ) : (
-            <EmptyEditorBody />
+            <div className="editor-body">
+              <div className="grt">
+                <Editor
+                  filePath={state.file}
+                  content={state.content}
+                  onChange={updateContent}
+                />
+              </div>
+            </div>
           )}
         </div>
       )}
