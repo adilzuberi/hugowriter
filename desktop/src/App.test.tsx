@@ -1,18 +1,24 @@
 import { vi, describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 
-vi.mock('@tauri-apps/plugin-fs', () => ({
+const fsMock = vi.hoisted(() => ({
   exists: vi.fn().mockResolvedValue(false),
   readTextFile: vi.fn().mockResolvedValue(''),
   writeTextFile: vi.fn().mockResolvedValue(undefined),
   readDir: vi.fn().mockResolvedValue([]),
   mkdir: vi.fn().mockResolvedValue(undefined),
+}))
+
+const dialogMock = vi.hoisted(() => ({
+  open: vi.fn().mockResolvedValue(null),
+}))
+
+vi.mock('@tauri-apps/plugin-fs', () => ({
+  ...fsMock,
   BaseDirectory: { AppData: 1 },
 }))
 
-vi.mock('@tauri-apps/plugin-dialog', () => ({
-  open: vi.fn().mockResolvedValue(null),
-}))
+vi.mock('@tauri-apps/plugin-dialog', () => dialogMock)
 
 import App from './App'
 
@@ -38,8 +44,8 @@ describe('App', () => {
   })
 
   it('reveals the Mode 3 placeholder when Mode 3 is clicked after picking a folder', async () => {
-    const { open } = await import('@tauri-apps/plugin-dialog')
-    ;(open as ReturnType<typeof vi.fn>).mockResolvedValueOnce('/tmp/test-folder')
+    dialogMock.open.mockResolvedValueOnce('/tmp/test-folder')
+    fsMock.readDir.mockResolvedValueOnce([])
     render(<App />)
     fireEvent.click(await screen.findByRole('button', { name: /Choose folder/i }))
     fireEvent.click(

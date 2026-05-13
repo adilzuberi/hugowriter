@@ -44,12 +44,122 @@ body {
   border-color: #222;
 }
 
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 240px;
+  border-right: 1px solid #e2e2e2;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 0.875rem;
+  gap: 0.5rem;
+}
+
+.sidebar-header .folder-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-header .link {
+  background: none;
+  border: none;
+  color: #2962b8;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+.sidebar-header .link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-error {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #a4302a;
+  background: #fdecea;
+  border-bottom: 1px solid #f5c6c4;
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow: auto;
+  padding: 0.25rem 0;
+}
+
+.empty-tree {
+  padding: 0.75rem;
+}
+
+.file-tree,
+.file-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #222;
+  font-family: inherit;
+}
+
+.tree-row:hover {
+  background: #ececec;
+}
+
+.tree-row.selected {
+  background: #d5e3f7;
+}
+
+.tree-row .caret {
+  width: 0.9rem;
+  display: inline-flex;
+  justify-content: center;
+  color: #888;
+  font-size: 0.7rem;
+}
+
+.tree-row .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .editor-body {
   flex: 1;
   overflow: auto;
+  min-width: 0;
 }
 
 .mode3-placeholder {
+  flex: 1;
   padding: 2rem;
   font-style: italic;
   color: #666;

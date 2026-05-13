@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
+import { Sidebar } from './components/Sidebar'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
 
@@ -39,38 +40,46 @@ function EmptyFolderState({ onChoose }: { onChoose: () => void }) {
   )
 }
 
-function EmptyEditorBody({ folder }: { folder: string }) {
+function EmptyEditorBody() {
   return (
     <div className="editor-body">
       <div className="grt">
-        <p className="muted">
-          Folder loaded: <code>{folder}</code>. File tree lands in the next commit.
-        </p>
+        <p className="muted">Pick a file from the sidebar to start editing. Editor wiring lands in the next commit.</p>
       </div>
     </div>
   )
 }
 
 export default function App() {
-  const { state, chooseFolder, loaded } = useHugowriterState()
+  const { state, chooseFolder, toggleDir } = useHugowriterState()
   const [mode, setMode] = useState<Mode>('mode1')
-
-  if (!loaded) {
-    return <div className="loading">Loading…</div>
-  }
 
   return (
     <>
       <ModeToolbar mode={mode} setMode={setMode} />
       {!state.folder ? (
         <EmptyFolderState onChoose={chooseFolder} />
-      ) : mode === 'mode3' ? (
-        // TODO: webview parity test
-        <div className="mode3-placeholder">
-          Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
-        </div>
       ) : (
-        <EmptyEditorBody folder={state.folder} />
+        <div className="workspace">
+          <Sidebar
+            folder={state.folder}
+            tree={state.tree}
+            expanded={state.expandedDirs}
+            selectedPath={state.file}
+            errorMessage={state.treeError}
+            onToggleDir={toggleDir}
+            onFileClick={() => undefined}
+            onChangeFolder={chooseFolder}
+          />
+          {mode === 'mode3' ? (
+            // TODO: webview parity test
+            <div className="mode3-placeholder">
+              Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
+            </div>
+          ) : (
+            <EmptyEditorBody />
+          )}
+        </div>
       )}
     </>
   )
