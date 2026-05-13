@@ -4,10 +4,6 @@ The Tauri 2.x host wrapping the MDXEditor frontend for Hugowriter. v0 ships a re
 
 See the ADR at `docs/decisions/0001-runtime.md` at the repo root for the runtime choice.
 
-## Boot screenshot
-
-`docs/screenshots/scaffold-boot.png` — captured manually after `pnpm --filter ./desktop tauri dev` brings up the window. CLI agents can't grab the screen, so the file is dropped in by hand.
-
 ## WebView prerequisites
 
 - macOS 11+ (WKWebView ships with the OS).
