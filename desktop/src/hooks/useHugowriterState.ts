@@ -9,6 +9,19 @@ function basename(path: string): string {
   return parts[parts.length - 1] ?? path
 }
 
+function findFileInTree(nodes: FileNode[], path: string): FileNode | null {
+  for (const node of nodes) {
+    if (node.kind === 'file' && node.path === path) return node
+    if (node.children) {
+      const found = findFileInTree(node.children, path)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+const PERSIST_DEBOUNCE_MS = 250
+
 export type HugowriterState = {
   folder: string | null
   file: string | null
@@ -34,11 +47,13 @@ export function useHugowriterState() {
   const [loaded, setLoaded] = useState(false)
   const stateRef = useRef(state)
   stateRef.current = state
+  const pendingFileRef = useRef<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
     loadState().then((persisted) => {
       if (cancelled) return
+      pendingFileRef.current = persisted.lastFile
       setState({
         folder: persisted.lastFolder,
         file: null,
@@ -169,12 +184,26 @@ export function useHugowriterState() {
 
   useEffect(() => {
     if (!loaded) return
-    saveState({
-      lastFolder: state.folder,
-      lastFile: state.file,
-      expandedDirs: Array.from(state.expandedDirs),
-    })
+    const timer = setTimeout(() => {
+      saveState({
+        lastFolder: state.folder,
+        lastFile: state.file,
+        expandedDirs: Array.from(state.expandedDirs),
+      })
+    }, PERSIST_DEBOUNCE_MS)
+    return () => clearTimeout(timer)
   }, [loaded, state.folder, state.file, state.expandedDirs])
+
+  // Reopen the last file once the tree resolves. One-shot per session.
+  useEffect(() => {
+    if (!loaded || !pendingFileRef.current || state.tree.length === 0) return
+    const path = pendingFileRef.current
+    pendingFileRef.current = null
+    const node = findFileInTree(state.tree, path)
+    if (node) void openFile(node)
+    // openFile is intentionally omitted: we want this to run on tree resolution only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, state.tree])
 
   // Reflect dirty state in the OS window title so it shows in the Mission Control switcher.
   useEffect(() => {
