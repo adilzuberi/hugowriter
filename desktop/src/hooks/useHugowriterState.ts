@@ -109,29 +109,20 @@ export function useHugowriterState() {
     })
   }, [])
 
-  const openFile = useCallback(async (node: FileNode) => {
-    if (node.kind !== 'file') return
-    try {
-      const content = await readFile(node.path)
-      setState((s) => ({ ...s, file: node.path, content, dirty: false, treeError: null }))
-    } catch (err) {
-      setState((s) => ({
-        ...s,
-        treeError: `Could not read ${node.name}: ${String(err)}`,
-      }))
-    }
+  const writeIfDirty = useCallback(async (): Promise<void> => {
+    const { file, content, dirty } = stateRef.current
+    if (!file || !dirty) return
+    await writeFile(file, content)
+    setState((s) =>
+      s.file === file && s.content === content
+        ? { ...s, dirty: false, treeError: null }
+        : s,
+    )
   }, [])
 
   const saveCurrent = useCallback(async (): Promise<void> => {
-    const { file, content, dirty } = stateRef.current
-    if (!file || !dirty) return
     try {
-      await writeFile(file, content)
-      setState((s) =>
-        s.file === file && s.content === content
-          ? { ...s, dirty: false, treeError: null }
-          : s,
-      )
+      await writeIfDirty()
     } catch (err) {
       setState((s) => ({
         ...s,
@@ -139,7 +130,42 @@ export function useHugowriterState() {
       }))
       throw err
     }
-  }, [])
+  }, [writeIfDirty])
+
+  const openFile = useCallback(
+    async (node: FileNode) => {
+      if (node.kind !== 'file') return
+      const { file: prevFile, dirty } = stateRef.current
+      if (dirty && prevFile) {
+        try {
+          await writeIfDirty()
+        } catch (err) {
+          // Block the switch so no work is lost; the error toast tells the user what went wrong.
+          setState((s) => ({
+            ...s,
+            treeError: `Could not auto-save ${basename(prevFile)}: ${String(err)}`,
+          }))
+          return
+        }
+      }
+      try {
+        const content = await readFile(node.path)
+        setState((s) => ({
+          ...s,
+          file: node.path,
+          content,
+          dirty: false,
+          treeError: null,
+        }))
+      } catch (err) {
+        setState((s) => ({
+          ...s,
+          treeError: `Could not read ${node.name}: ${String(err)}`,
+        }))
+      }
+    },
+    [writeIfDirty],
+  )
 
   useEffect(() => {
     if (!loaded) return
