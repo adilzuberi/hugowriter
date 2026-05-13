@@ -194,6 +194,33 @@ body {
   min-width: 0;
 }
 
+/*
+ * impact-css's `.grt button` chunky-blues every button inside the themed body,
+ * including MDXEditor's toolbar. (0,2,1) here beats (0,1,1) there; back to neutral
+ * surface so MDXEditor's own toolbar styling shows through.
+ */
+.grt .mdxeditor button,
+.grt .mdxeditor select {
+  font-family: inherit;
+  font-weight: normal;
+  color: inherit;
+  background: transparent;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-bottom-width: 1px;
+  border-radius: 4px;
+  padding: 3px 5px;
+  outline: none;
+  outline-offset: 0;
+  text-decoration: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.grt .mdxeditor button:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
 .mode3-placeholder {
   flex: 1;
   padding: 2rem;

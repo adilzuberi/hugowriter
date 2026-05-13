@@ -9,6 +9,8 @@ import {
   codeBlockPlugin,
   codeMirrorPlugin,
   frontmatterPlugin,
+  toolbarPlugin,
+  KitchenSinkToolbar,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 
@@ -25,6 +27,7 @@ export function Editor({ filePath, content, onChange }: Props) {
       markdown={content}
       onChange={onChange}
       plugins={[
+        toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }),
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
