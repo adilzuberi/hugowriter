@@ -8,7 +8,6 @@ import {
   markdownShortcutPlugin,
   codeBlockPlugin,
   codeMirrorPlugin,
-  frontmatterPlugin,
   toolbarPlugin,
   KitchenSinkToolbar,
 } from '@mdxeditor/editor'
@@ -38,7 +37,6 @@ export function Editor({ filePath, content, onChange }: Props) {
         codeMirrorPlugin({
           codeBlockLanguages: { '': 'Plain text', go: 'Go', js: 'JavaScript', ts: 'TypeScript', sh: 'Shell' },
         }),
-        frontmatterPlugin(),
       ]}
     />
   )
