@@ -97,6 +97,7 @@ export default function App() {
     chooseFolder,
     toggleDir,
     openFile,
+    openPath,
     updateContent,
     saveCurrent,
     setThemeForFolder,
@@ -146,8 +147,10 @@ export default function App() {
             expanded={state.expandedDirs}
             selectedPath={state.file}
             errorMessage={state.treeError}
+            recentFiles={state.recentFiles}
             onToggleDir={toggleDir}
             onFileClick={openFile}
+            onOpenRecent={openPath}
             onChangeFolder={chooseFolder}
           />
           <div className="editor-pane">

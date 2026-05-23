@@ -8,13 +8,17 @@ export type PersistedState = {
   lastFile: string | null
   expandedDirs: string[]
   themeByFolder: Record<string, string>
+  recentFiles: string[]
 }
+
+export const RECENT_FILES_MAX = 8
 
 export const EMPTY_STATE: PersistedState = {
   lastFolder: null,
   lastFile: null,
   expandedDirs: [],
   themeByFolder: {},
+  recentFiles: [],
 }
 
 export async function loadState(): Promise<PersistedState> {
@@ -31,6 +35,9 @@ export async function loadState(): Promise<PersistedState> {
         parsed.themeByFolder && typeof parsed.themeByFolder === 'object'
           ? parsed.themeByFolder
           : {},
+      recentFiles: Array.isArray(parsed.recentFiles)
+        ? parsed.recentFiles.slice(0, RECENT_FILES_MAX)
+        : [],
     }
   } catch {
     return EMPTY_STATE
