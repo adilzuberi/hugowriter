@@ -3,10 +3,12 @@ import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
 import { useFrontmatterEditor } from './hooks/useFrontmatterEditor'
 import { useThemes } from './hooks/useThemes'
+import { useHugoServer } from './hooks/useHugoServer'
 import { Sidebar } from './components/Sidebar'
 import { Editor } from './components/Editor'
 import { TitleBar } from './components/TitleBar'
 import { ThemePicker } from './components/ThemePicker'
+import { HugoIframe } from './components/HugoIframe'
 import { FrontmatterPanel } from './components/FrontmatterPanel/FrontmatterPanel'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
@@ -105,6 +107,7 @@ export default function App() {
     state.themeByFolder,
     setThemeForFolder,
   )
+  const { status: hugoStatus } = useHugoServer(themeState.siteRoot, mode === 'mode2')
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -154,6 +157,12 @@ export default function App() {
               <div className="mode3-placeholder">
                 Mode 3 — coming soon, revisit at 30-day dogfood checkpoint
               </div>
+            ) : mode === 'mode2' ? (
+              <HugoIframe
+                status={hugoStatus}
+                dirty={state.dirty}
+                fileSavedAt={state.lastSavedAt}
+              />
             ) : !state.file ? (
               <NoFileMessage />
             ) : (

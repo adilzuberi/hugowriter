@@ -272,6 +272,43 @@ body {
   color: #666;
 }
 
+.hugo-iframe {
+  flex: 1;
+  border: none;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+}
+
+.hugo-iframe-dirty {
+  outline: 1px dashed #c08000;
+  outline-offset: -1px;
+}
+
+.hugo-iframe-pending,
+.hugo-iframe-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  color: #555;
+}
+
+.hugo-iframe-error {
+  color: #a4302a;
+}
+
+.hugo-iframe-error code {
+  background: #f5f5f5;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-family: var(--font-code, Menlo, monospace);
+}
+
 .loading {
   padding: 2rem;
   color: #888;

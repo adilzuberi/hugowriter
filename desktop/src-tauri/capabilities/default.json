@@ -25,6 +25,24 @@
         { "path": "$HOME/**" },
         { "path": "/Volumes/**" }
       ]
+    },
+    "shell:default",
+    "shell:allow-kill",
+    "shell:allow-stdin-write",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "hugo",
+          "cmd": "hugo",
+          "args": true
+        },
+        {
+          "name": "hugo-server",
+          "cmd": "hugo",
+          "args": true
+        }
+      ]
     }
   ]
 }
