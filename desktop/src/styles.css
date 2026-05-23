@@ -123,6 +123,81 @@ body {
   border-bottom: 1px solid #f5c6c4;
 }
 
+.sidebar-recent {
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 0.8rem;
+}
+
+.sidebar-recent summary {
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+  user-select: none;
+}
+
+.sidebar-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.25rem;
+}
+
+.sidebar-recent-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.75rem 0.2rem 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-recent-item:hover {
+  background: #ececec;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-top: 1px solid #e8e8e8;
+  background: #fafafa;
+  font-size: 0.8rem;
+  color: #444;
+}
+
+.status-bar-state {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.status-bar-build {
+  padding: 0.25rem 0.75rem;
+  font: inherit;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.status-bar-build:hover:not(:disabled) {
+  background: #f1f1f1;
+}
+
+.status-bar-build:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .sidebar-body {
   flex: 1;
   overflow: auto;

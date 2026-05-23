@@ -7,8 +7,10 @@ type Props = {
   expanded: Set<string>
   selectedPath: string | null
   errorMessage: string | null
+  recentFiles: string[]
   onToggleDir: (path: string) => void
   onFileClick: (node: FileNode) => void
+  onOpenRecent: (path: string) => void
   onChangeFolder: () => void
 }
 
@@ -23,10 +25,13 @@ export function Sidebar({
   expanded,
   selectedPath,
   errorMessage,
+  recentFiles,
   onToggleDir,
   onFileClick,
+  onOpenRecent,
   onChangeFolder,
 }: Props) {
+  const inFolderRecent = recentFiles.filter((p) => p.startsWith(folder + '/'))
   return (
     <aside className="sidebar" aria-label="File tree">
       <header className="sidebar-header">
@@ -37,6 +42,25 @@ export function Sidebar({
           Change
         </button>
       </header>
+      {inFolderRecent.length > 0 && (
+        <details className="sidebar-recent" open>
+          <summary>Recent</summary>
+          <ul className="sidebar-recent-list">
+            {inFolderRecent.map((path) => (
+              <li key={path}>
+                <button
+                  type="button"
+                  className="sidebar-recent-item"
+                  title={path}
+                  onClick={() => onOpenRecent(path)}
+                >
+                  {basename(path)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {errorMessage && (
         <div className="sidebar-error" role="alert">
           {errorMessage}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { loadState, saveState } from '../api/state'
+import { loadState, saveState, RECENT_FILES_MAX } from '../api/state'
 import { pickFolder, readFile, readTree, writeFile } from '../api/fs'
 import { setWindowTitle } from '../api/window'
 import type { FileNode } from '../lib/treeFilter'
@@ -7,6 +7,11 @@ import type { FileNode } from '../lib/treeFilter'
 function basename(path: string): string {
   const parts = path.split('/').filter(Boolean)
   return parts[parts.length - 1] ?? path
+}
+
+function bumpRecent(current: string[], path: string): string[] {
+  const without = current.filter((p) => p !== path)
+  return [path, ...without].slice(0, RECENT_FILES_MAX)
 }
 
 function findFileInTree(nodes: FileNode[], path: string): FileNode | null {
@@ -32,6 +37,7 @@ export type HugowriterState = {
   treeError: string | null
   themeByFolder: Record<string, string>
   lastSavedAt: number | null
+  recentFiles: string[]
 }
 
 const EMPTY: HugowriterState = {
@@ -44,6 +50,7 @@ const EMPTY: HugowriterState = {
   treeError: null,
   themeByFolder: {},
   lastSavedAt: null,
+  recentFiles: [],
 }
 
 export function useHugowriterState() {
@@ -68,6 +75,7 @@ export function useHugowriterState() {
         treeError: null,
         themeByFolder: persisted.themeByFolder,
         lastSavedAt: null,
+        recentFiles: persisted.recentFiles,
       })
       setLoaded(true)
     })
@@ -177,6 +185,7 @@ export function useHugowriterState() {
           content,
           dirty: false,
           treeError: null,
+          recentFiles: bumpRecent(s.recentFiles, node.path),
         }))
       } catch (err) {
         setState((s) => ({
@@ -196,10 +205,26 @@ export function useHugowriterState() {
         lastFile: state.file,
         expandedDirs: Array.from(state.expandedDirs),
         themeByFolder: state.themeByFolder,
+        recentFiles: state.recentFiles,
       })
     }, PERSIST_DEBOUNCE_MS)
     return () => clearTimeout(timer)
-  }, [loaded, state.folder, state.file, state.expandedDirs, state.themeByFolder])
+  }, [
+    loaded,
+    state.folder,
+    state.file,
+    state.expandedDirs,
+    state.themeByFolder,
+    state.recentFiles,
+  ])
+
+  const openPath = useCallback(
+    async (path: string) => {
+      const node = findFileInTree(stateRef.current.tree, path)
+      if (node) await openFile(node)
+    },
+    [openFile],
+  )
 
   const setThemeForFolder = useCallback((folder: string, themeId: string) => {
     setState((s) => ({
@@ -236,6 +261,7 @@ export function useHugowriterState() {
     updateContent,
     saveCurrent,
     setThemeForFolder,
+    openPath,
     loaded,
   }
 }
