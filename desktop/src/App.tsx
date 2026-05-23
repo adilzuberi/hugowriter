@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
+import { useFrontmatterEditor } from './hooks/useFrontmatterEditor'
 import { Sidebar } from './components/Sidebar'
 import { Editor } from './components/Editor'
 import { TitleBar } from './components/TitleBar'
+import { FrontmatterPanel } from './components/FrontmatterPanel/FrontmatterPanel'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
 
@@ -49,6 +51,28 @@ function NoFileMessage() {
         <p className="muted">Pick a file from the sidebar to start editing.</p>
       </div>
     </div>
+  )
+}
+
+function FileEditor({
+  filePath,
+  content,
+  updateContent,
+}: {
+  filePath: string
+  content: string
+  updateContent: (next: string) => void
+}) {
+  const editor = useFrontmatterEditor(content, updateContent)
+  return (
+    <>
+      <FrontmatterPanel editor={editor} />
+      <div className="editor-body">
+        <div className="grt">
+          <Editor filePath={filePath} content={editor.body} onChange={editor.setBody} />
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -102,15 +126,12 @@ export default function App() {
             ) : !state.file ? (
               <NoFileMessage />
             ) : (
-              <div className="editor-body">
-                <div className="grt">
-                  <Editor
-                    filePath={state.file}
-                    content={state.content}
-                    onChange={updateContent}
-                  />
-                </div>
-              </div>
+              <FileEditor
+                key={state.file}
+                filePath={state.file}
+                content={state.content}
+                updateContent={updateContent}
+              />
             )}
           </div>
         </div>
