@@ -1,0 +1,7 @@
+# Theme settings — preset + base font-size + accent colour.
+[theme]
+preset = "focus-stock"
+basePx = 18
+accent = "#1a5fb4"
+
+# A trailing comment to verify toml_edit preserves it on round-trip.
