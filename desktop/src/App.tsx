@@ -9,6 +9,7 @@ import { Editor } from './components/Editor'
 import { TitleBar } from './components/TitleBar'
 import { ThemePicker } from './components/ThemePicker'
 import { HugoIframe } from './components/HugoIframe'
+import { StatusBar } from './components/StatusBar'
 import { FrontmatterPanel } from './components/FrontmatterPanel/FrontmatterPanel'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
@@ -177,6 +178,11 @@ export default function App() {
                 themeId={themeState.selected}
               />
             )}
+            <StatusBar
+              siteRoot={themeState.siteRoot}
+              dirty={state.dirty}
+              onBeforeBuild={saveCurrent}
+            />
           </div>
         </div>
       )}
