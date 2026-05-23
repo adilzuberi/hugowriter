@@ -45,8 +45,16 @@ cargo test --manifest-path src-tauri/Cargo.toml   # Rust placeholder test
 
 ## Mode toolbar
 
-- Mode 1 — Theme inline (Shadow DOM theme injection, deferred to PR 4).
-- Mode 2 — Hugo preview (iframe Hugo sidecar, deferred to PR 5).
-- Mode 3 — Inline Hugo render (Lexical on `contentEditable`, deferred to PR 6+, revisited at the 30-day dogfood checkpoint).
+- Mode 1 — Theme inline. Theme picker lists themes/ and Hugo Modules (PR 4).
+- Mode 2 — Hugo preview. Iframe at `127.0.0.1:51313` driven by `hugo server` via `tauri-plugin-shell` (PR 5).
+- Mode 3 — Inline Hugo render. Stubbed — revisited at the 30-day dogfood checkpoint.
 
-Modes 1 and 2 currently render the same placeholder body. Mode 3 renders only its placeholder text.
+## Site settings panel
+
+The toolbar ⚙ button opens a right-side panel that reads the merged Hugo config
+via `hugo config --format json`, lets you edit site metadata + theme settings
+(preset, base font-size, accent colour), and writes dirty fields back through
+`toml_edit` while preserving comments and key order. After a save the panel
+touches `<site>/.hugowriter-sentinel` so Mode 2's Hugo server picks up the
+change. Requires `hugo` on PATH — the bundled-sidecar binary lands in a
+follow-up.
