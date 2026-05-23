@@ -30,6 +30,7 @@ export type HugowriterState = {
   expandedDirs: Set<string>
   tree: FileNode[]
   treeError: string | null
+  themeByFolder: Record<string, string>
 }
 
 const EMPTY: HugowriterState = {
@@ -40,6 +41,7 @@ const EMPTY: HugowriterState = {
   expandedDirs: new Set<string>(),
   tree: [],
   treeError: null,
+  themeByFolder: {},
 }
 
 export function useHugowriterState() {
@@ -62,6 +64,7 @@ export function useHugowriterState() {
         expandedDirs: new Set(persisted.expandedDirs),
         tree: [],
         treeError: null,
+        themeByFolder: persisted.themeByFolder,
       })
       setLoaded(true)
     })
@@ -189,10 +192,18 @@ export function useHugowriterState() {
         lastFolder: state.folder,
         lastFile: state.file,
         expandedDirs: Array.from(state.expandedDirs),
+        themeByFolder: state.themeByFolder,
       })
     }, PERSIST_DEBOUNCE_MS)
     return () => clearTimeout(timer)
-  }, [loaded, state.folder, state.file, state.expandedDirs])
+  }, [loaded, state.folder, state.file, state.expandedDirs, state.themeByFolder])
+
+  const setThemeForFolder = useCallback((folder: string, themeId: string) => {
+    setState((s) => ({
+      ...s,
+      themeByFolder: { ...s.themeByFolder, [folder]: themeId },
+    }))
+  }, [])
 
   // Reopen the last file once the tree resolves. One-shot per session.
   useEffect(() => {
@@ -221,6 +232,7 @@ export function useHugowriterState() {
     openFile,
     updateContent,
     saveCurrent,
+    setThemeForFolder,
     loaded,
   }
 }

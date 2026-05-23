@@ -44,6 +44,31 @@ body {
   border-color: #222;
 }
 
+.mode-toolbar-spacer {
+  margin-left: auto;
+}
+
+.theme-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.theme-picker-empty {
+  color: #888;
+  font-style: italic;
+}
+
+.theme-picker select {
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  background: #fff;
+}
+
 .workspace {
   flex: 1;
   display: flex;

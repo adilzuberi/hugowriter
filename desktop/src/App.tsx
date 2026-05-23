@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import './themes/impact.css'
 import { useHugowriterState } from './hooks/useHugowriterState'
 import { useFrontmatterEditor } from './hooks/useFrontmatterEditor'
+import { useThemes } from './hooks/useThemes'
 import { Sidebar } from './components/Sidebar'
 import { Editor } from './components/Editor'
 import { TitleBar } from './components/TitleBar'
+import { ThemePicker } from './components/ThemePicker'
 import { FrontmatterPanel } from './components/FrontmatterPanel/FrontmatterPanel'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
@@ -15,7 +17,15 @@ const MODES: Array<{ id: Mode; label: string }> = [
   { id: 'mode3', label: 'Mode 3 — Inline Hugo render' },
 ]
 
-function ModeToolbar({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) {
+function ModeToolbar({
+  mode,
+  setMode,
+  themePickerSlot,
+}: {
+  mode: Mode
+  setMode: (m: Mode) => void
+  themePickerSlot?: React.ReactNode
+}) {
   return (
     <div className="mode-toolbar" role="toolbar" aria-label="View mode">
       {MODES.map((m) => (
@@ -29,6 +39,7 @@ function ModeToolbar({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void
           {m.label}
         </button>
       ))}
+      {themePickerSlot && <div className="mode-toolbar-spacer">{themePickerSlot}</div>}
     </div>
   )
 }
@@ -58,16 +69,18 @@ function FileEditor({
   filePath,
   content,
   updateContent,
+  themeId,
 }: {
   filePath: string
   content: string
   updateContent: (next: string) => void
+  themeId: string | null
 }) {
   const editor = useFrontmatterEditor(content, updateContent)
   return (
     <>
       <FrontmatterPanel editor={editor} />
-      <div className="editor-body">
+      <div className="editor-body" data-theme={themeId ?? undefined}>
         <div className="grt">
           <Editor filePath={filePath} content={editor.body} onChange={editor.setBody} />
         </div>
@@ -84,8 +97,14 @@ export default function App() {
     openFile,
     updateContent,
     saveCurrent,
+    setThemeForFolder,
   } = useHugowriterState()
   const [mode, setMode] = useState<Mode>('mode1')
+  const { themeState, selectTheme } = useThemes(
+    state.folder,
+    state.themeByFolder,
+    setThemeForFolder,
+  )
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -101,7 +120,19 @@ export default function App() {
 
   return (
     <>
-      <ModeToolbar mode={mode} setMode={setMode} />
+      <ModeToolbar
+        mode={mode}
+        setMode={setMode}
+        themePickerSlot={
+          state.folder && mode === 'mode1' ? (
+            <ThemePicker
+              themes={themeState.themes}
+              selected={themeState.selected}
+              onSelect={selectTheme}
+            />
+          ) : null
+        }
+      />
       {!state.folder ? (
         <EmptyFolderState onChoose={chooseFolder} />
       ) : (
@@ -131,6 +162,7 @@ export default function App() {
                 filePath={state.file}
                 content={state.content}
                 updateContent={updateContent}
+                themeId={themeState.selected}
               />
             )}
           </div>
