@@ -31,6 +31,7 @@ export type HugowriterState = {
   tree: FileNode[]
   treeError: string | null
   themeByFolder: Record<string, string>
+  lastSavedAt: number | null
 }
 
 const EMPTY: HugowriterState = {
@@ -42,6 +43,7 @@ const EMPTY: HugowriterState = {
   tree: [],
   treeError: null,
   themeByFolder: {},
+  lastSavedAt: null,
 }
 
 export function useHugowriterState() {
@@ -65,6 +67,7 @@ export function useHugowriterState() {
         tree: [],
         treeError: null,
         themeByFolder: persisted.themeByFolder,
+        lastSavedAt: null,
       })
       setLoaded(true)
     })
@@ -133,7 +136,7 @@ export function useHugowriterState() {
     await writeFile(file, content)
     setState((s) =>
       s.file === file && s.content === content
-        ? { ...s, dirty: false, treeError: null }
+        ? { ...s, dirty: false, treeError: null, lastSavedAt: Date.now() }
         : s,
     )
   }, [])
