@@ -62,7 +62,6 @@ function splitWith(text: string, marker: string): FrontmatterSplit {
     // Unterminated frontmatter — treat as no frontmatter so the file isn't lost.
     return { format: 'none', raw: '', body: text }
   }
-  const closeStart = match.index + (match[1] === '\n' ? 1 : 0)
   const closeEnd = match.index + match[0].length
   const raw = text.slice(0, afterFirst + closeEnd)
   const body = text.slice(afterFirst + closeEnd)
