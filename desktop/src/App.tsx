@@ -11,6 +11,7 @@ import { ThemePicker } from './components/ThemePicker'
 import { HugoIframe } from './components/HugoIframe'
 import { StatusBar } from './components/StatusBar'
 import { FrontmatterPanel } from './components/FrontmatterPanel/FrontmatterPanel'
+import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 
 type Mode = 'mode1' | 'mode2' | 'mode3'
 
@@ -24,10 +25,16 @@ function ModeToolbar({
   mode,
   setMode,
   themePickerSlot,
+  onToggleSettings,
+  settingsOpen,
+  settingsAvailable,
 }: {
   mode: Mode
   setMode: (m: Mode) => void
   themePickerSlot?: React.ReactNode
+  onToggleSettings: () => void
+  settingsOpen: boolean
+  settingsAvailable: boolean
 }) {
   return (
     <div className="mode-toolbar" role="toolbar" aria-label="View mode">
@@ -42,7 +49,20 @@ function ModeToolbar({
           {m.label}
         </button>
       ))}
-      {themePickerSlot && <div className="mode-toolbar-spacer">{themePickerSlot}</div>}
+      <div className="mode-toolbar-spacer">
+        {themePickerSlot}
+        {settingsAvailable && (
+          <button
+            type="button"
+            className="settings-toggle"
+            aria-pressed={settingsOpen}
+            aria-label="Site settings"
+            onClick={onToggleSettings}
+          >
+            ⚙ Site settings
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -104,6 +124,7 @@ export default function App() {
     setThemeForFolder,
   } = useHugowriterState()
   const [mode, setMode] = useState<Mode>('mode1')
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const { themeState, selectTheme } = useThemes(
     state.folder,
     state.themeByFolder,
@@ -128,6 +149,9 @@ export default function App() {
       <ModeToolbar
         mode={mode}
         setMode={setMode}
+        settingsAvailable={!!themeState.siteRoot}
+        settingsOpen={settingsOpen}
+        onToggleSettings={() => setSettingsOpen((o) => !o)}
         themePickerSlot={
           state.folder && mode === 'mode1' ? (
             <ThemePicker
@@ -153,6 +177,11 @@ export default function App() {
             onFileClick={openFile}
             onOpenRecent={openPath}
             onChangeFolder={chooseFolder}
+          />
+          <SettingsPanel
+            siteRoot={settingsOpen ? themeState.siteRoot : null}
+            open={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
           />
           <div className="editor-pane">
             <TitleBar file={state.file} dirty={state.dirty} />

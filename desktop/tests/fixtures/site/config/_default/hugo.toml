@@ -1,0 +1,9 @@
+# Fixture site config — used by Cargo round-trip tests.
+title = "Fixture site"
+description = "A site fixture for SettingsPanel tests"
+languageCode = "en-gb"
+baseURL = "https://example.test/"
+
+# Hugo defaults — keep so round-trip tests assert these survive a write.
+enableRobotsTXT = true
+buildDrafts = false
