@@ -7,12 +7,14 @@ export type PersistedState = {
   lastFolder: string | null
   lastFile: string | null
   expandedDirs: string[]
+  themeByFolder: Record<string, string>
 }
 
 export const EMPTY_STATE: PersistedState = {
   lastFolder: null,
   lastFile: null,
   expandedDirs: [],
+  themeByFolder: {},
 }
 
 export async function loadState(): Promise<PersistedState> {
@@ -25,6 +27,10 @@ export async function loadState(): Promise<PersistedState> {
       lastFolder: parsed.lastFolder ?? null,
       lastFile: parsed.lastFile ?? null,
       expandedDirs: Array.isArray(parsed.expandedDirs) ? parsed.expandedDirs : [],
+      themeByFolder:
+        parsed.themeByFolder && typeof parsed.themeByFolder === 'object'
+          ? parsed.themeByFolder
+          : {},
     }
   } catch {
     return EMPTY_STATE
