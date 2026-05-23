@@ -1,3 +1,5 @@
+pub mod commands;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -5,7 +7,11 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .setup(|_app| Ok(()))
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![
+            commands::config::config_load,
+            commands::config::config_write,
+            commands::config::config_touch_sentinel,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running Hugowriter desktop application");
 }
